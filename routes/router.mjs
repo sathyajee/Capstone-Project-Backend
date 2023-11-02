@@ -1,6 +1,7 @@
 import express from "express";
 import {CreateAndUploadFile} from '../BusniessLogics/IPFSUpload.mjs'
 import { retriveWill } from "../BusniessLogics/retrive.mjs";
+import {downloadingOfWill, downloadingCreatorKey, downloadingNominiKey} from "../BusniessLogics/Download.mjs"
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
 import multer from "multer";
@@ -26,7 +27,7 @@ const storageWill = multer.diskStorage({
 
 route.get('/',(req,res)=>{
     try {
-        res.send({Message:"Home page is Home"})
+        res.send({Message:"Home page is Home",collaboration_link:"https://prod.liveshare.vsengsaas.visualstudio.com/join?63EA21EECE35D11E4CC3FBAB8ACFF89CD845"})
     } catch (error) {
         res.send(`Could not reach home page: ${error}`)
     }
@@ -51,5 +52,11 @@ const storageKey = multer.diskStorage({
   const uploadKey = multer({ storage: storageKey });
 
 route.post('/retriveWill',uploadKey.single('file'),retriveWill)
+
+route.get('/download-Will',downloadingOfWill)
+
+route.get('/download-creator-key',downloadingCreatorKey)
+
+route.get('/download-nomini-key', downloadingNominiKey)
 
 export {route};

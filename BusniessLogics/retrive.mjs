@@ -26,6 +26,16 @@ export const retriveWill = async (req,res)=>{
        // console.log(priNom);
         console.log(`Got the enCrypted Private Key of Creator`);
 
+        // Deleting the file that is taken as input
+
+        fs.unlink(keyFilePath+Filename, (unlinkErr) =>{
+          if (unlinkErr){
+            console.error('Error deleting file:', unlinkErr);
+          } else{
+            console.log('File deleted successfully');
+          }
+        })
+
         const dbresult=await pkg.find();
         console.log("bd serch done......")
         const finalres=dbresult.filter(data=>data.UIDc==UIDc);// getting required detail
@@ -43,9 +53,13 @@ export const retriveWill = async (req,res)=>{
 
 
         }
-           //retriveing file by using cid
+        //retriveing file by using cid
         const fileName = await retrieveFiles(cid);
         console.log("file retrived......");
+
+        // File Delete from IPFS
+        // await deleteFileFromIpfs(cid);
+        // console.log('File Deleted from IPFS');
 
         res.status(200).send({CreaterPrivateKey: priCre,CID: cid});
         // res.download(willDownloadDirectory, fileName, (err)=>{
@@ -97,4 +111,8 @@ async function retriveCPK(filePath) {
       console.log(`Downloaded ${fileName} (${buffer.byteLength} bytes)`);
     }
     return fileName
+  }
+
+  async function deleteFileFromIpfs(cid){
+    
   }
