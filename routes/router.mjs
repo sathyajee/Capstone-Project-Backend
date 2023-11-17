@@ -1,10 +1,11 @@
 import express from "express";
-import {CreateAndUploadFile} from '../BusniessLogics/IPFSUpload.mjs'
+import {CreateAndUploadFile} from '../BusniessLogics/FileUpload.mjs'
 import { retriveWill } from "../BusniessLogics/retrive.mjs";
 import {downloadingOfWill, downloadingCreatorKey, downloadingNominiKey} from "../BusniessLogics/Download.mjs"
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
 import multer from "multer";
+import { UpdateWill } from "../BusniessLogics/Update_Will.mjs";
 const route = express()
 route.use(express.json())
 
@@ -29,7 +30,7 @@ const storageWill = multer.diskStorage({
 
 route.get('/',(req,res)=>{
     try {
-        res.send({Message:"Home page is Home",collaboration_link:"https://prod.liveshare.vsengsaas.visualstudio.com/join?63EA21EECE35D11E4CC3FBAB8ACFF89CD845"})
+        res.send({Message:"Home page is Home",collaboration_link:"https://prod.liveshare.vsengsaas.visualstudio.com/join?F8E6520801DAFDECEA3E3FEF103FE71BB9DB"})
     } catch (error) {
         res.send(`Could not reach home page: ${error}`)
     }
@@ -61,5 +62,34 @@ route.get('/download-Will', downloadingOfWill)
 route.get('/download-creator-key',downloadingCreatorKey)
 
 route.get('/download-nomini-key', downloadingNominiKey)
+
+const storageCreKey = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './BusniessLogics/Creprikey/');
+  },
+  filename: function (req, file, cb) {
+    const UIDc = req.body.UIDc
+    cb(null, UIDc+'.pdf'); // Use the original file name
+  }
+});
+
+const uploadcreKey = multer({ storage: storageCreKey });
+
+const storageNewWill = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './BusniessLogics/Will_Store/');
+  },
+  filename: function (req, file, cb) {
+    const UIDc = req.body.UIDc
+    cb(null, UIDc+'.pdf'); // Use the original file name
+  }
+});
+
+const uploadNewWill = multer({ storage: storageNewWill });
+
+route.post('/Update-willprivateKey',uploadcreKey.single('file'),(req,res)=>{
+  res.send({Message: 'File received'})
+})
+route.post('/Update-will',uploadNewWill.single('file'), UpdateWill)
 
 export {route};
