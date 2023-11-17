@@ -14,7 +14,7 @@ export const CreateAndUploadFile = async (req,res)=>{
     try {
         const {Name,UIDc,UIDn}= req.body;
         const file = req.file;
-        const Filename = file.originalname;
+        const Filename = UIDc+'.pdf';
 
         console.log(`${Name}, ${UIDc}, ${UIDn}`);
         console.log('input recived...')
@@ -28,7 +28,7 @@ export const CreateAndUploadFile = async (req,res)=>{
           });
 
         //encrypting cid
-        const crypto_details= await encryption(fileHash);
+        const crypto_details= await encryption(UIDc, fileHash);
 
         // console.log(crypto_details);
         console.log('encryption done....');

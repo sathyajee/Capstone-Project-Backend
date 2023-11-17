@@ -16,8 +16,10 @@ const storageWill = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './BusniessLogics/Will_Store/');
     },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname); // Use the original file name
+    filename: async function (req, file, cb) {
+      const UIDc = await req.body.UIDc;
+      console.log(UIDc);
+      cb(null, UIDc+'.pdf'); // Use the original file name
     }
   });
   
@@ -45,7 +47,8 @@ const storageKey = multer.diskStorage({
       cb(null, './BusniessLogics/prikey/');
     },
     filename: function (req, file, cb) {
-      cb(null, file.originalname); // Use the original file name
+      const UIDc = req.body.UIDc
+      cb(null, UIDc+file.originalname); // Use the original file name
     }
   });
   
@@ -53,7 +56,7 @@ const storageKey = multer.diskStorage({
 
 route.post('/retriveWill',uploadKey.single('file'),retriveWill)
 
-route.get('/download-Will',downloadingOfWill)
+route.get('/download-Will', downloadingOfWill)
 
 route.get('/download-creator-key',downloadingCreatorKey)
 

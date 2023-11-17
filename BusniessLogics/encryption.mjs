@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const keyDirectory = './BusniessLogics/keys/';
 
-export async function encryption(data) {
+export async function encryption(UIDc, data) {
   
 //--------------------------------------------creator key pair------------------------------------------------------
 const { publicKey :creator_publicKey, privateKey: creator_privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -65,7 +65,7 @@ const encryptedcid = crypto.publicEncrypt(
 const nomini_privateKey_str= nomini_privateKey.export({ type: 'pkcs1', format: 'pem' }).toString('base64');
 const creator_privateKey_str= creator_privateKey.export({ type: 'pkcs1', format: 'pem' }).toString('base64');
 
-await makeFiles(nomini_privateKey_str,creator_privateKey_str);
+await makeFiles(UIDc, nomini_privateKey_str,creator_privateKey_str);
 
 
 //-------------------------------------------------------------
@@ -82,13 +82,13 @@ return  encrypted_data;
 }
 //-----------function to save key in pdf----------------------------------------------
 
-async function makeFiles (val1, val2) {
+async function makeFiles (UIDc, val1, val2) {
     const doc1 = new PDFDocument();
     const doc2 = new PDFDocument();
   
     // Pipe the PDF content to a writable stream
-    const writeStream1 = fs.createWriteStream(keyDirectory+'NominiKey.pdf');
-    const writeStream2 = fs.createWriteStream(keyDirectory+'CreatorKey.pdf');
+    const writeStream1 = fs.createWriteStream(keyDirectory+UIDc+'NominiKey.pdf');
+    const writeStream2 = fs.createWriteStream(keyDirectory+UIDc+'CreatorKey.pdf');
     doc1.pipe(writeStream1);
     doc2.pipe(writeStream2);
   
