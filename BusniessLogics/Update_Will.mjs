@@ -17,7 +17,7 @@ export const UpdateWill = async (req,res)=>{
     const check = update_check(req.body.UIDc);
     if(check!= ''){
         //delte the existing file record
-        // delete_will(req,check);
+        delete_will(req,check);
         console.log("deleted successfuly....")
         //upload new file and getting cid
         const cid= await UploadFile(req);

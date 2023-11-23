@@ -26,16 +26,21 @@ export const delete_will = async (req,encid)=>{
 
     // const file = req.file;
     // const fileName = file.originalname;
-    const fileName = req.body.UIDc+'.pdf';
+    const fileName = req.body.UIDc+'CreatorKey.pdf';
 
-    let priCreator = await retriveCPK(keyDirectory+fileName);
-    priCreator = priCreator.substring(1);
-    const cid=Decrypt(encid,priCreator);
-    console.log("cid decrypted.....");
-    //using cid delete file from ipfs
-    // deleteFileFromIpfs(cid);
-    console.log("file deleted successfully...");
+    // let priCreator = await retriveCPK(keyDirectory+fileName);
+    // priCreator = priCreator.substring(1);
+    // const cid=Decrypt(encid,priCreator);
+    // console.log("cid decrypted.....");
+    // //using cid delete file from ipfs
+    // // deleteFileFromIpfs(cid);
+    // console.log("file deleted successfully...");
 
+
+    fs.unlink(keyDirectory+fileName, (err)=>{
+      if(err) console.log(err);
+      else console.log('Will File Deleted');
+    });
     // return priCreator;
     
 

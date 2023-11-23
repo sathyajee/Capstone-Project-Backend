@@ -14,7 +14,9 @@ export const UploadFile = async (req)=>{
     try {
         const UIDc= req.body.UIDc;
         const file = req.file;
-        const Filename = UIDc+'.pdf';
+        // const Filename = UIDc+'.pdf';
+        // const Filename = 'undefined.pdf';
+        const Filename = file.originalname;
 
         
         console.log('input recived...')

@@ -6,8 +6,9 @@ import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
 import multer from "multer";
 import { UpdateWill } from "../BusniessLogics/Update_Will.mjs";
-const route = express()
-route.use(express.json())
+import { updatingThash } from "../BusniessLogics/updatingThash.mjs";
+const route = express.Router();
+route.use(express.json());
 
 
 route.use(express.urlencoded({extended:true}))
@@ -17,20 +18,23 @@ const storageWill = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, './BusniessLogics/Will_Store/');
     },
-    filename: async function (req, file, cb) {
-      const UIDc = await req.body.UIDc;
-      console.log(UIDc);
-      cb(null, UIDc+'.pdf'); // Use the original file name
+    filename: function (req, file, cb) {
+      // let UIDc = req.body.UIDc;
+      // console.log('checking 1', req.body);       //There is a problem here.
+      // UIDc = req.body.UIDc;
+      // cb(null, UIDc+'.pdf'); // Use the original file name
+      cb(null, file.originalname);
     }
   });
   
-  const uploadWill = multer({ storage: storageWill });
+  const uploadWill = await multer({ storage: storageWill });
 
 // ---------------------Import are done--------------------
 
 route.get('/',(req,res)=>{
     try {
-        res.send({Message:"Home page is Home",collaboration_link:"https://prod.liveshare.vsengsaas.visualstudio.com/join?F8E6520801DAFDECEA3E3FEF103FE71BB9DB"})
+      console.log('Backend called')
+        res.send({Message: 'Welcome to Will Management System'})
     } catch (error) {
         res.send(`Could not reach home page: ${error}`)
     }
@@ -39,7 +43,7 @@ route.get('/',(req,res)=>{
 
 //------------uploding will----------------------------------------------
 
-route.post('/createWill',uploadWill.single('file'), CreateAndUploadFile)  
+route.post('/createWill', uploadWill.single('file'), CreateAndUploadFile)  
 
 //------------------retriveing will-------------------------------------
 
@@ -48,8 +52,7 @@ const storageKey = multer.diskStorage({
       cb(null, './BusniessLogics/prikey/');
     },
     filename: function (req, file, cb) {
-      const UIDc = req.body.UIDc
-      cb(null, UIDc+file.originalname); // Use the original file name
+      cb(null, file.originalname); // Use the original file name
     }
   });
   
@@ -57,19 +60,18 @@ const storageKey = multer.diskStorage({
 
 route.post('/retriveWill',uploadKey.single('file'),retriveWill)
 
-route.get('/download-Will', downloadingOfWill)
+route.get('/download/Will', downloadingOfWill)
 
-route.get('/download-creator-key',downloadingCreatorKey)
+route.get('/download/creator-key',downloadingCreatorKey)
 
-route.get('/download-nomini-key', downloadingNominiKey)
+route.get('/download/nomini-key', downloadingNominiKey)
 
 const storageCreKey = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './BusniessLogics/Creprikey/');
   },
   filename: function (req, file, cb) {
-    const UIDc = req.body.UIDc
-    cb(null, UIDc+'.pdf'); // Use the original file name
+    cb(null, file.originalname); // Use the original file name
   }
 });
 
@@ -80,8 +82,9 @@ const storageNewWill = multer.diskStorage({
     cb(null, './BusniessLogics/Will_Store/');
   },
   filename: function (req, file, cb) {
-    const UIDc = req.body.UIDc
-    cb(null, UIDc+'.pdf'); // Use the original file name
+    // const UIDc = req.body.UIDc
+    // cb(null, UIDc+'.pdf'); // Use the original file name
+    cb(null, file.originalname);
   }
 });
 
@@ -91,5 +94,7 @@ route.post('/Update-willprivateKey',uploadcreKey.single('file'),(req,res)=>{
   res.send({Message: 'File received'})
 })
 route.post('/Update-will',uploadNewWill.single('file'), UpdateWill)
+
+route.get('/Update/Thash', updatingThash)
 
 export {route};

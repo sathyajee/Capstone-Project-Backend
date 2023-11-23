@@ -39,6 +39,8 @@ async function willDownload(Path,req,res) {
     //   });
       const filePath = Path+req.query.UIDc+'.pdf';
       const fName = req.query.UIDc+'.pdf';
+    //   const filePath = Path+'undefined.pdf';
+    //   const fName = 'undefined.pdf';
       res.download(filePath, fName, (err) => {
         if (err) {
           console.error('Error downloading file:', err);
@@ -84,6 +86,7 @@ export const downloadingOfWill = async (req,res)=>{
 
 export const downloadingCreatorKey = async (req,res)=>{
     try{
+        console.log(req.query);
         await keyDownload(keyDirectory,req.query.UIDc+'CreatorKey.pdf',res);
     }
     catch{

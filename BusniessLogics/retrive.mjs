@@ -5,6 +5,7 @@ import pkg from '../models/Schema.js';
 import {Decrypt} from './decryption.mjs';
 import dotenv from 'dotenv'
 import fs from 'fs'
+import {retriveEncid} from './retriveEncryptedCid.mjs';
 dotenv.config({path:"./.env"})
 
 const token = process.env.TOKEN
@@ -16,7 +17,7 @@ export const retriveWill = async (req,res)=>{
     try {
         const {UIDc} = req.body;
         const file = req.file;
-        const Filename = UIDc+file.originalname;
+        const Filename = file.originalname;
         console.log(`Inputs received.....`);
 
         let priNom = await retriveCPK(keyFilePath+Filename);
@@ -42,26 +43,29 @@ export const retriveWill = async (req,res)=>{
 
         console.log("result length  is:"+finalres.length);
         let cid,priCre;
-        if(finalres.length){
+        if(finalres.length!=0){
             //decrypt the creator private key using nomini privatekey
+            const index=finalres[0].EncCid;// we have stored the index
+            // const encid=retriveEncid(index);
 
-           priCre= Decrypt(finalres[0].EncPri,priNom);
-           console.log("privkey of creator recived...............");
-           cid=Decrypt(finalres[0].EncCid,priCre);
+            console.log("privkey of creator recived...............");
+
+           priCre= await Decrypt(finalres[0].EncPri,priNom);
+           cid= await Decrypt(finalres[0].EncCid,priCre);
 
            console.log("cid recived.................")
 
 
         }
         //retriveing file by using cid
-        const fileName = await retrieveFiles(cid);
+        const fileName = await retrieveFiles(cid,UIDc);
         console.log("file retrived......");
 
         // File Delete from IPFS
         // await deleteFileFromIpfs(cid);
         // console.log('File Deleted from IPFS');
 
-        res.status(200).send({CreaterPrivateKey: priCre,CID: cid});
+        res.status(200).send({CreaterPrivateKey: priCre,CID: cid,fileName: fileName});
         // res.download(willDownloadDirectory, fileName, (err)=>{
         //     if(err){
         //         console.log(`Error downloading file:`, err);
@@ -99,14 +103,14 @@ async function retriveCPK(filePath) {
   });
   }
 
-  async function retrieveFiles(cid) {
+  async function retrieveFiles(cid,UIDc) {
     const res = await client.get(cid);
     const files = await res.files();
     // console.log('hi');
     let fileName;
     for (const file of files) {
       const buffer = await file.arrayBuffer();
-      fileName = file.name;
+      fileName = UIDc+'.pdf';
       fs.writeFileSync(willDownloadDirectory+fileName, Buffer.from(buffer));
       console.log(`Downloaded ${fileName} (${buffer.byteLength} bytes)`);
     }

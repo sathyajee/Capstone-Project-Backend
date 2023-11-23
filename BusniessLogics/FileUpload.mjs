@@ -10,12 +10,11 @@ const client = new Web3Storage({ token });
 const willUploadDirectory = './BusniessLogics/Will_Store/';
 
 export const CreateAndUploadFile = async (req,res)=>{
-    // console.log("Hi")
+    console.log(req.body)
     try {
         const {Name,UIDc,UIDn}= req.body;
         const file = req.file;
-        const Filename = UIDc+'.pdf';
-
+        const Filename = file.originalname;
         console.log(`${Name}, ${UIDc}, ${UIDn}`);
         console.log('input recived...')
 
