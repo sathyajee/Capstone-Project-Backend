@@ -17,6 +17,10 @@ const data_schema = new mongoose.Schema({
         required: true,
         minlength:4
     },
+    Index:{
+        type: String,
+        default:-1
+    },
     EncCid:{
         type: String,
         required: true
