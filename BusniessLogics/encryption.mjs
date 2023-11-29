@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const keyDirectory = './BusniessLogics/keys/';
 
-export async function encryption(UIDc, data) {
+export async function encryption(UIDc, data, password) {
   
 //--------------------------------------------creator key pair------------------------------------------------------
 const { publicKey :creator_publicKey, privateKey: creator_privateKey } = crypto.generateKeyPairSync("rsa", {
@@ -65,7 +65,7 @@ const encryptedcid = crypto.publicEncrypt(
 const nomini_privateKey_str= nomini_privateKey.export({ type: 'pkcs1', format: 'pem' }).toString('base64');
 const creator_privateKey_str= creator_privateKey.export({ type: 'pkcs1', format: 'pem' }).toString('base64');
 
-await makeFiles(UIDc, nomini_privateKey_str,creator_privateKey_str);
+await makeFiles(UIDc, nomini_privateKey_str,creator_privateKey_str, password);
 
 
 //-------------------------------------------------------------
@@ -82,9 +82,20 @@ return  encrypted_data;
 }
 //-----------function to save key in pdf----------------------------------------------
 
-async function makeFiles (UIDc, val1, val2) {
-    const doc1 = new PDFDocument();
-    const doc2 = new PDFDocument();
+async function makeFiles (UIDc, val1, val2, password) {
+    
+  
+  // Set passwords for the documents
+   // Set your desired password
+  const options ={
+    userPassword: password
+  }
+  
+  
+  const doc2 = new PDFDocument(options);
+  const doc1 = new PDFDocument();
+
+  
   
     // Pipe the PDF content to a writable stream
     const writeStream1 = fs.createWriteStream(keyDirectory+UIDc+'NominiKey.pdf');

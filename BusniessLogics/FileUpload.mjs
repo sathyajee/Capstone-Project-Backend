@@ -12,7 +12,7 @@ const willUploadDirectory = './BusniessLogics/Will_Store/';
 export const CreateAndUploadFile = async (req,res)=>{
     console.log(req.body)
     try {
-        const {Name,UIDc,UIDn}= req.body;
+        const {Name,UIDc,UIDn, password}= req.body;
         const file = req.file;
         const Filename = file.originalname;
         console.log(`${Name}, ${UIDc}, ${UIDn}`);
@@ -27,7 +27,7 @@ export const CreateAndUploadFile = async (req,res)=>{
           });
 
         //encrypting cid
-        const crypto_details= await encryption(UIDc, fileHash);
+        const crypto_details= await encryption(UIDc, fileHash, password);
 
         // console.log(crypto_details);
         console.log('encryption done....');

@@ -18,6 +18,7 @@ export const retriveWill = async (req,res)=>{
         const {UIDc} = req.body;
         const file = req.file;
         const Filename = file.originalname;
+        // const password = req.body.password;
         console.log(`Inputs received.....`);
 
         let priNom = await retriveCPK(keyFilePath+Filename);

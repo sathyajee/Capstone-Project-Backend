@@ -1,6 +1,7 @@
 import { Web3Storage, getFilesFromPath } from 'web3.storage';
 import fs from 'fs';
 import dotenv from 'dotenv'
+import {PdfReader} from "pdfreader";
 import {encryption} from "./encryption.mjs" 
 import pkg from '../models/Schema.js';
 import { UploadFile } from './IPFS_upload.mjs';
@@ -27,9 +28,10 @@ export const delete_will = async (req,encid)=>{
     // const file = req.file;
     // const fileName = file.originalname;
     const fileName = req.body.UIDc+'CreatorKey.pdf';
+    const password = req.body.password;
 
-    // let priCreator = await retriveCPK(keyDirectory+fileName);
-    // priCreator = priCreator.substring(1);
+    let priCreator = await retriveCPK(keyDirectory+fileName, password);
+    priCreator = priCreator.substring(1);
     // const cid=Decrypt(encid,priCreator);
     // console.log("cid decrypted.....");
     // //using cid delete file from ipfs
@@ -41,27 +43,34 @@ export const delete_will = async (req,encid)=>{
       if(err) console.log(err);
       else console.log('Will File Deleted');
     });
-    // return priCreator;
     
+    return priCreator;
 
 }
 
 
-async function retriveCPK(filePath) {
+async function retriveCPK(filePath, password) {
     return new Promise((resolve, reject) => {
       let privateKey='';
-  
-    new PdfReader().parseFileItems(filePath, (err, item) => {
-      if (err) {
-        console.error(err);
-        reject(err); // Reject the promise if there's an error
-      } else if (!item) {
-      //   console.warn("end of file");
-        resolve(privateKey); // Resolve the promise when parsing is complete
-      } else if (item.text) {
-        privateKey = privateKey+'\n'+item.text;
-      }
-    });
+    try{
+      new PdfReader({password: password}).parseFileItems(filePath, (err, item) => {
+        if (err) {
+          console.error(err);
+          // reject(err); // Reject the promise if there's an error
+          privateKey= ' Incorrect Password';
+          resolve(privateKey);
+        } else if (!item) {
+        //   console.warn("end of file");
+          resolve(privateKey); // Resolve the promise when parsing is complete
+        } else if (item.text) {
+          privateKey = privateKey+'\n'+item.text;
+        }
+      });
+    }catch{
+      privateKey= ' Incorrect Password';
+      resolve(privateKey);
+    }
+    
   });
   }
 
