@@ -4,7 +4,7 @@ import fs from "fs";
 
 const keyDirectory = "./BusniessLogics/keys/";
 
-export async function encryption(UIDc, data, password) {
+export async function encryption(UIDc, data, passwordc, passwordn) {
   //--------------------------------------------creator key pair------------------------------------------------------
   const { publicKey: creator_publicKey, privateKey: creator_privateKey } =
     crypto.generateKeyPairSync("rsa", {
@@ -75,7 +75,8 @@ export async function encryption(UIDc, data, password) {
     UIDc,
     nomini_privateKey_str,
     creator_privateKey_str,
-    password
+    passwordc,
+    passwordn
   );
 
   //-------------------------------------------------------------
@@ -85,15 +86,18 @@ export async function encryption(UIDc, data, password) {
 }
 //-----------function to save key in pdf----------------------------------------------
 
-async function makeFiles(UIDc, val1, val2, password) {
+async function makeFiles(UIDc, val1, val2, passwordc, passwordn) {
   // Set passwords for the documents
   // Set your desired password
-  const options = {
-    userPassword: password,
+  const optionsC = {
+    userPassword: passwordc,
+  };
+  const optionsN = {
+    userPassword: passwordn,
   };
 
-  const doc2 = new PDFDocument(options);
-  const doc1 = new PDFDocument();
+  const doc2 = new PDFDocument(optionsC);
+  const doc1 = new PDFDocument(optionsN);
 
   // Pipe the PDF content to a writable stream
   const writeStream1 = fs.createWriteStream(

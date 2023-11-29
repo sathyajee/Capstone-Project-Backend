@@ -15,7 +15,7 @@ export const CreateAndUploadFile = async (req, res) => {
     const check = await add_check(req.body.UIDc);
     // console.log(`check`, check);
     if (check === 0) {
-      const { Name, UIDc, UIDn, password } = req.body;
+      const { Name, UIDc, UIDn, passwordc, passwordn } = req.body;
       const file = req.file;
       const Filename = file.originalname;
     //   console.log(`${Name}, ${UIDc}, ${UIDn}`);
@@ -30,7 +30,7 @@ export const CreateAndUploadFile = async (req, res) => {
       });
 
       //encrypting cid
-      const crypto_details = await encryption(UIDc, fileHash, password);
+      const crypto_details = await encryption(UIDc, fileHash, passwordc, passwordn);
 
       // console.log(crypto_details);
       console.log("encryption done....");
