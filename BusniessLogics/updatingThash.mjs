@@ -16,18 +16,18 @@ export const updatingThash = async (req, res) => {
     const dbresult = await pkg.find();
     const finalres = dbresult.filter((data) => data.UIDc == UIDc); // getting required detail
     // console.log(finalres);
-    console.log(req.query);
+    // console.log(req.query);
 
     if (finalres.length) {
       const id = finalres[finalres.length - 1]._id;
-      console.log(id);
+      // console.log(id);
       await pkg
         .findByIdAndUpdate(id, { Index: Thash })
         // .then(res.send("encid Updated Successfully..."))
         .catch((err) => console.log(err));
       // await pkg.findByIdAndUpdate(id, {Enccid:""})
       const result = pkg.findById(id);
-      console.log(result.EncCid);
+      // console.log(result.EncCid);
     }
     console.log("Thash addedto db successfuly.........");
     res.send({ messages: "Thash added successfuly...." });
